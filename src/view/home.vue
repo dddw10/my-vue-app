@@ -109,7 +109,6 @@ onMounted(()=>{
         <div class="login-info">
           <p>上次登录时间：<span>2025-5-27</span></p>
           <p>上次登录地点：<span>东莞</span></p>
-          <p>test</p>
         </div>
       </el-card>
       <el-card shadow="hover" class="table">
