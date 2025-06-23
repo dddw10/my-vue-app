@@ -139,6 +139,7 @@ onMounted(()=>{
           </div>
           <el-card class="top-echart">
             <div ref="echart" style="height: 280px;"></div>
+            <div>get</div>
           </el-card>
         </el-card>
       </div>
