@@ -23,5 +23,12 @@ export default {
       method:'get',
       mock: false 
     })
+  },
+  getUserData(){
+    return request({
+      url:'/user/getUserData',
+      method:'get',
+      mock: false 
+    })
   }
 }

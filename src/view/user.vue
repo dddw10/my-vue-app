@@ -1,46 +1,49 @@
 <script setup>
+import {ref,onMounted,getCurrentInstance,reactive} from 'vue'
+const {proxy} = getCurrentInstance()
+const tableData = ref([])
+async function getUserData(){
+  let data = await proxy.$api.getUserData()
+  console.log(data)
+  tableData.value = data.list.map(item =>({
+    ...item,
+    sexLabel : item.sex === 1 ? '男' : '女'
+  }))
+}
+const tableLabel = reactive([
+  {
+    prop:'name',
+    label:'姓名'
+  },
+  {
+    prop:'age',
+    label:'年龄'
+  },
+  {
+    prop:'sexLabel',
+    label:'性别'
+  },
+  {
+    prop:'birth',
+    label:'出生日期',
+    width:200
+  },
+  {
+    prop:'addr',
+    label:'地址',
+    width:400
+  },
+])
 const handleClick = () => {
   console.log('click')
 }
 
-const tableData = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
-  },
-  {
-    date: '2016-05-02',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
-  },
-  {
-    date: '2016-05-04',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
-  },
-]
+
+onMounted(()=>{
+  getUserData()
+})
+
+
 </script>
 <template>
   <div class="user-header">
@@ -56,18 +59,19 @@ const tableData = [
   </div>
   <div class="table">
     <el-table :data="tableData" style="width: 100%">
-    <el-table-column fixed prop="date" label="Date" width="150" />
-    <el-table-column prop="name" label="Name" width="120" />
-    <el-table-column prop="state" label="State" width="120" />
-    <el-table-column prop="city" label="City" width="120" />
-    <el-table-column prop="address" label="Address" width="600" />
-    <el-table-column prop="zip" label="Zip" width="120" />
-    <el-table-column fixed="right" label="Operations" min-width="120">
-      <template #default>
-        <el-button link type="primary" size="small" @click="handleClick">编辑</el-button>
-        <el-button  type="danger" size="small">删除</el-button>
-      </template>
-    </el-table-column>
+      <el-table-column 
+        v-for="item in tableLabel"
+        :key="item.prop"
+        :prop="item.prop"
+        :label="item.label"
+        :width="item.width ? item.width : 125"
+      />
+      <el-table-column fixed="right" label="Operations" min-width="120">
+        <template #default>
+          <el-button  type="primary" size="small" @click="handleClick">编辑</el-button>
+          <el-button  type="danger" size="small">删除</el-button>
+        </template>
+      </el-table-column>
   </el-table>
   </div>
 </template>
