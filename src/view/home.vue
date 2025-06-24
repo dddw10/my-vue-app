@@ -28,7 +28,7 @@ const tableLabel = ref({
 //chart表格数据
 const chartData = ref([])
 async function getChartData() {
-  const {orderData} = await proxy.$api.getChartData()
+  const {orderData,userData,videData} = await proxy.$api.getChartData()
   //对于第一个图标进行x轴 和 series 的赋值
   xOptions.xAxis.data = orderData.date
   xOptions.series = Object.keys(orderData.data[0]).map(val=>({
@@ -38,6 +38,46 @@ async function getChartData() {
   }))
   const oneEchart = echarts.init(proxy.$refs['echart'])
   oneEchart.setOption(xOptions)
+
+  //对于柱状图
+  xOptions.xAxis.data = userData.map(item => item.date)
+  xOptions.series = [
+    {
+      name:'新增用户',
+      data:userData.map(item => item.new),
+      type:'bar'
+    },
+    {
+      name:'活跃用户',
+      data:userData.map(item => item.active),
+      type:'bar'
+    }
+  ]
+  const twoEchart = echarts.init(proxy.$refs['twoEchart'])
+  twoEchart.setOption(xOptions)
+
+  //对于饼状图
+  pieOptions.series = [
+    { 
+      data:videData,
+      type:'pie'
+    }
+  ]
+  const treeEchart = echarts.init(proxy.$refs['treeEchart'])
+  treeEchart.setOption(pieOptions)
+
+  //监听页面的变化
+  const observer = ref(null) 
+    //如果监听的容器大小发生了变化，改变之后，会执行回调函数
+  observer.value = new ResizeObserver(()=>{
+    oneEchart.resize()
+    twoEchart.resize()
+    treeEchart.resize()
+  })
+  //容器存在
+  if(proxy.$refs['echart']){
+    observer.value.observe(proxy.$refs['echart'])
+  }
 }
 //折线图和柱状图的公共配置
 const xOptions = reactive({
@@ -147,8 +187,16 @@ onMounted(()=>{
         </el-card>
       </div>
       <el-card class="top-echart">
-        <div ref="echart" style="height: 280px;"></div>
+        <div ref="echart" style="height: 220px;"></div>
       </el-card>
+      <div class="graph">
+        <el-card class="low-echart">
+          <div ref="twoEchart" style="height: 200px;"></div>
+        </el-card> 
+        <el-card class="low-echart">
+          <div ref="treeEchart" style="height: 200px;"></div>
+        </el-card>  
+      </div>
     </el-col>
   </el-row> 
 </template>
@@ -207,20 +255,20 @@ onMounted(()=>{
       margin-bottom: 20px;
       .icon{
         color: #fff;
-        width: 80px;
-        height: 80px;
-        font-size: 300px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
         text-align: center;
       }
       .right-text{
-        margin-left: 15px;
+        margin-left: 20px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         .price{
-          font-size: 30px;
-          line-height: 50px;
+          font-size: 16px;
+          line-height: 20px;
         }
         .txt{
           font-size: 12px;
@@ -229,6 +277,15 @@ onMounted(()=>{
       }
     }
     
+  }
+  .graph{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    .low-echart{
+      width: 48%;
+      height: 240px;
+    }
   }
 }
 </style>
