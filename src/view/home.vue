@@ -1,6 +1,6 @@
 <script setup>
 import { ref,getCurrentInstance,onMounted,reactive } from "vue";
-import * as echart from 'echarts'
+import * as echarts from 'echarts'
 const {proxy} = getCurrentInstance()
 //请求数据，使用mockjs拦截器
 //获取照片的url地址
@@ -28,9 +28,16 @@ const tableLabel = ref({
 //chart表格数据
 const chartData = ref([])
 async function getChartData() {
-  const {orderData,videData,userData} = await proxy.$api.getChartData()
-  
-  // const oneEchart =
+  const {orderData} = await proxy.$api.getChartData()
+  //对于第一个图标进行x轴 和 series 的赋值
+  xOptions.xAxis.data = orderData.date
+  xOptions.series = Object.keys(orderData.data[0]).map(val=>({
+    name:val,
+    data:orderData.data.map(item => item[val]),
+    type:'line'
+  }))
+  const oneEchart = echarts.init(proxy.$refs['echart'])
+  oneEchart.setOption(xOptions)
 }
 //折线图和柱状图的公共配置
 const xOptions = reactive({
@@ -137,13 +144,13 @@ onMounted(()=>{
               <p class="price">￥{{ item.value }}</p>
               <p class="txt">{{ item.name }}</p>
           </div>
-          <el-card class="top-echart">
-            <div ref="echart" style="height: 280px;"></div>
-          </el-card>
         </el-card>
       </div>
+      <el-card class="top-echart">
+        <div ref="echart" style="height: 280px;"></div>
+      </el-card>
     </el-col>
-  </el-row>
+  </el-row> 
 </template>
 <style scoped lang="less">
 .home{
