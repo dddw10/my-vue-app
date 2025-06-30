@@ -105,6 +105,7 @@ onMounted(()=>{
       </el-table-column>
     </el-table>
     <el-pagination
+        class="pager" 
         background
         layout="prev, pager, next" 
         size="small"
@@ -117,5 +118,18 @@ onMounted(()=>{
 .user-header{
   display: flex;
   justify-content: space-between;
+}
+.table{
+  height: 520px;
+  position: relative;
+  .pager{
+    position: absolute;
+    right: 10px;
+    bottom: 30px;
+  }
+  .el-table{
+    width: 100%;
+    height: 500px;
+  }
 }
 </style>
