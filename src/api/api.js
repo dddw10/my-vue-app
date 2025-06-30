@@ -31,5 +31,13 @@ export default {
       mock: false,
       data
     })
+  },
+  deleteUserList(data){
+    return request({
+      url:'/user/deleteUserList',
+      method:'get',
+      mock: false,
+      data
+    })
   }
 }

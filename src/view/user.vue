@@ -1,6 +1,6 @@
 <script setup>
-import { Model } from 'echarts'
 import {ref,onMounted,getCurrentInstance,reactive} from 'vue'
+import { ElMessageBox,ElMessage } from "element-plus";
 const {proxy} = getCurrentInstance()
 const tableData = ref([])
 async function getUserData(){
@@ -58,7 +58,18 @@ function handleChange(page){
   console.log(page)
   getUserData()
 }
-
+//删除功能
+function handelDel(val){
+  ElMessageBox.confirm("确认要删除该用户吗？").then(async ()=>{
+    await proxy.$api.deleteUserList({id:val.id})
+    ElMessage({
+      showClose:true,
+      message:'删除成功',
+      type:'success'
+    })
+    getUserData()
+  })
+}
 onMounted(()=>{
   getUserData()
 })
@@ -87,9 +98,9 @@ onMounted(()=>{
         :width="item.width ? item.width : 125"
       />
       <el-table-column fixed="right" label="Operations" min-width="120">
-        <template #default>
+        <template #="scope">
           <el-button  type="primary" size="small" @click="handleClick">编辑</el-button>
-          <el-button  type="danger" size="small">删除</el-button>
+          <el-button  type="danger" size="small" @click="handelDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
