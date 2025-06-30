@@ -186,15 +186,15 @@ onMounted(()=>{
           </div>
         </el-card>
       </div>
-      <el-card class="top-echart">
-        <div ref="echart" style="height: 220px;"></div>
+      <el-card class="top-echart" shadow="hover">
+        <div ref="echart" style="height: 320px;"></div>
       </el-card>
       <div class="graph">
-        <el-card class="low-echart">
-          <div ref="twoEchart" style="height: 200px;"></div>
+        <el-card class="low-echart" shadow="hover">
+          <div ref="twoEchart" style="height: 280px;"></div>
         </el-card> 
-        <el-card class="low-echart">
-          <div ref="treeEchart" style="height: 200px;"></div>
+        <el-card class="low-echart" shadow="hover">
+          <div ref="treeEchart" style="height: 240px;"></div>
         </el-card>  
       </div>
     </el-col>
@@ -255,8 +255,8 @@ onMounted(()=>{
       margin-bottom: 20px;
       .icon{
         color: #fff;
-        width: 40px;
-        height: 40px;
+        width: 80px;
+        height: 80px;
         font-size: 30px;
         text-align: center;
       }
@@ -267,8 +267,8 @@ onMounted(()=>{
         justify-content: center;
         align-items: center;
         .price{
-          font-size: 16px;
-          line-height: 20px;
+          font-size: 30px;
+          line-height: 30px;
         }
         .txt{
           font-size: 12px;
@@ -284,7 +284,7 @@ onMounted(()=>{
     justify-content: space-between;
     .low-echart{
       width: 48%;
-      height: 240px;
+      height: 280px;
     }
   }
 }

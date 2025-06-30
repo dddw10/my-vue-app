@@ -1,9 +1,10 @@
 <script setup>
+import { Model } from 'echarts'
 import {ref,onMounted,getCurrentInstance,reactive} from 'vue'
 const {proxy} = getCurrentInstance()
 const tableData = ref([])
 async function getUserData(){
-  let data = await proxy.$api.getUserData()
+  let data = await proxy.$api.getUserData(sereach_name)
   console.log(data)
   tableData.value = data.list.map(item =>({
     ...item,
@@ -37,7 +38,17 @@ const tableLabel = reactive([
 const handleClick = () => {
   console.log('click')
 }
-
+//搜索功能
+const sereach = reactive({
+  keyWord:''
+})
+const sereach_name = reactive({
+  name:''
+})
+function findname(){
+  sereach_name.name = sereach.keyWord
+  getUserData(sereach_name.name)
+}
 
 onMounted(()=>{
   getUserData()
@@ -48,12 +59,12 @@ onMounted(()=>{
 <template>
   <div class="user-header">
     <el-button type="primary">+新增</el-button>
-    <el-form :inline="true">
+    <el-form :inline="true" :model="sereach">
       <el-form-item label="请输入">
-        <el-input placeholder="请输入用户名"></el-input>
+        <el-input placeholder="请输入用户名" v-model="sereach.keyWord"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
+        <el-button type="primary" @click="findname">搜索</el-button>
       </el-form-item>
     </el-form>
   </div>
