@@ -10,6 +10,7 @@ async function getUserData(){
     ...item,
     sexLabel : item.sex === 1 ? '男' : '女'
   }))
+  sereach_name.total = data.count
 }
 const tableLabel = reactive([
   {
@@ -43,11 +44,19 @@ const sereach = reactive({
   keyWord:''
 })
 const sereach_name = reactive({
-  name:''
+  name:'',
+  total:0,
+  page:1
 })
 function findname(){
   sereach_name.name = sereach.keyWord
   getUserData(sereach_name.name)
+}
+//分页功能
+function handleChange(page){
+  sereach_name.page = page
+  console.log(page)
+  getUserData()
 }
 
 onMounted(()=>{
@@ -83,7 +92,14 @@ onMounted(()=>{
           <el-button  type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
-  </el-table>
+    </el-table>
+    <el-pagination
+        background
+        layout="prev, pager, next" 
+        size="small"
+        :total="sereach_name.total"
+        @current-change="handleChange"
+         />
   </div>
 </template>
 <style scoped lang="less">

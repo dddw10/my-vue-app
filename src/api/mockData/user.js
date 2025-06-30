@@ -1,17 +1,15 @@
 import Mock from "mockjs"
-function param20bj(url){
-  const search = url.split('?')[1]
-  if(!search){
-    return{}
+function param20bj(url) {
+  const search = url.split('?')[1];
+  if (!search) {
+    return {};
   }
-  return JSON.parse(
-    '{"'+
-    decodeURIComponent(search)
-    .replace(/"/g,'\\"')
-    .replace(/&/g,'",')
-    .replace(/=/g,'":"')+
-    '"}'
-  )
+  const params = new URLSearchParams(search);
+  const result = {};
+  for (const [key, value] of params) {
+    result[key] = value;
+  }
+  return result;
 }
 let List = []
 const count = 200
@@ -46,5 +44,22 @@ export default{
         count:mockList.length
       }
     }
+  },
+  deleteUser:(config)=>{
+    const {id} = param20bj(config.url)
+    if(!id){
+      return{
+        code:-999,
+        message:"参数不正确"
+      }
+    }
+    else{
+        List = List.filter((u)=> u.id !==id)
+        return{
+          code:200,
+          message:"删除成功"
+        }
+      }
+    
   }
 }
