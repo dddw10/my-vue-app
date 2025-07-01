@@ -60,6 +60,22 @@ export default{
           message:"删除成功"
         }
       }
-    
+  },
+  addUser:(config)=>{
+    const {name,age,address,date,region} = JSON.parse(config.body)
+    List.unshift({
+      id:Mock.Random.guid(),
+      name:name,
+      age:age,
+      sex:parseInt(region),
+      birth:date,
+      addr:address
+    })
+    return{
+      code:200,
+      data:{
+        message:'添加成功'
+      }
+    }
   }
 }

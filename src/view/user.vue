@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import {ref,onMounted,getCurrentInstance,reactive} from 'vue'
-import { ElMessageBox,ElMessage } from "element-plus";
+import { ElMessageBox,ElMessage,FormInstance, FormRules } from "element-plus";
+import moment from 'moment'
 const {proxy} = getCurrentInstance()
 const tableData = ref([])
 async function getUserData(){
@@ -70,6 +71,102 @@ function handelDel(val){
     getUserData()
   })
 }
+//增加功能
+// const dialogTableVisible = ref(false)
+const dialogFormVisible = ref(false)
+// const formLabelWidth = '140px'
+interface RuleForm {
+  name: string
+  age:string
+  region: string
+  date: string
+  address:string
+}
+
+const ruleFormRef = ref<FormInstance>()
+const ruleForm = reactive<RuleForm>({
+  name: '',
+  age:'',
+  region: '',
+  date: '',
+  address:''
+})
+
+//表单校验规则
+const rules = reactive<FormRules<RuleForm>>({
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 2, max: 5, message: '长度为2-5之间', trigger: 'blur' },
+  ],
+  age:[
+    {required: true,message: '请输入年龄', trigger: 'blur'},
+    { type: 'number', message: '请输入数字', trigger: 'blur' },
+  ],
+  region: [
+    {
+      required: true,
+      message: '请选择你的性别',
+      trigger: 'change',
+    },
+  ],
+  date: [
+    {
+      type: 'date',
+      required: true,
+      message: '请选择你的出生日期',
+      trigger: 'change',
+    },
+  ],
+  address: [
+    {required: true,message: '请输入地址', trigger: 'blur'},
+    { min: 10, max: 30, message: '请写到县', trigger: 'blur' },
+  ]
+})
+//对时间进行格式化
+function timeFormat(time){
+  const date = new Date(time)
+  const timeFormatdate = moment(date).format('YYYY-MM-DD')
+  console.log(timeFormatdate)
+  return timeFormatdate
+}
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate( async (valid, fields) => {
+    if (valid) {
+      let res = null
+      ruleForm.date = timeFormat(ruleForm.date)
+      console.log('submit!',ruleForm)
+      res = await proxy.$api.addUser(ruleForm)
+      if(res){
+        getUserData()
+        dialogFormVisible.value = false
+        ElMessage({
+          showClose:true,
+          message:'添加成功',
+          type:'success'
+        })
+      }
+    
+    } else {
+      ElMessage({
+        showClose:true,
+        message:'添加失败',
+        type:'error'
+      })
+      console.log('error submit!', fields)
+    }
+  })
+}
+//重置页面
+const resetForm = (formEl: FormInstance | undefined) => {
+  dialogFormVisible.value = true
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+
+
 onMounted(()=>{
   getUserData()
 })
@@ -78,7 +175,7 @@ onMounted(()=>{
 </script>
 <template>
   <div class="user-header">
-    <el-button type="primary">+新增</el-button>
+    <el-button type="primary" plain @click="resetForm(ruleFormRef)">+新增</el-button>
     <el-form :inline="true" :model="sereach">
       <el-form-item label="请输入">
         <el-input placeholder="请输入用户名" v-model="sereach.keyWord"></el-input>
@@ -113,6 +210,62 @@ onMounted(()=>{
         @current-change="handleChange"
          />
   </div>
+  <el-dialog v-model="dialogFormVisible" title="增加用户" width="500">
+    <el-form
+    ref="ruleFormRef"
+    style="max-width: 500px"
+    :model="ruleForm"
+    :rules="rules"
+    label-width="auto"
+    class="addForm"
+  >
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="ruleForm.name" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="年龄" prop="age">
+          <el-input v-model.number="ruleForm.age" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="性别" prop="region">
+          <el-select v-model="ruleForm.region" placeholder="请输入性别">
+            <el-option label="男" value='1' />
+            <el-option label="女" value='0' />
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="出生日期" required prop="date">
+          <el-date-picker
+            v-model="ruleForm.date"
+            type="date"
+            aria-label="请选择"
+            placeholder="请选择"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-form-item label="地址" prop="address">
+      <el-input v-model="ruleForm.address" />
+    </el-form-item>
+  </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button  type="primary" @click="resetForm(ruleFormRef)">重置</el-button>
+        <el-button  type="primary" @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <style scoped lang="less">
 .user-header{
@@ -130,6 +283,9 @@ onMounted(()=>{
   .el-table{
     width: 100%;
     height: 500px;
+  }
+  .addForm{
+    display: flex;
   }
 }
 </style>

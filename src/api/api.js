@@ -39,5 +39,13 @@ export default {
       mock: false,
       data
     })
+  },
+  addUser(data){
+    return request({
+      url:'/user/addUser',
+      method:'post',
+      mock: false,
+      data
+    })
   }
 }
