@@ -50,8 +50,21 @@ const hasChildren = computed(()=>list.value.filter(item=>item.children))
 //引入iscollapse，pinia
 import { useCollapseStore } from "../store/CollapseStore.js";
 import { storeToRefs } from "pinia";
+import { useRouter,useRoute } from "vue-router";
 const CollapseStore = useCollapseStore();
 const { isCollapse } = storeToRefs(CollapseStore);
+//引入tabsStore
+import { usetabsStore } from "../store/tabsStore.js";
+const tabsStore = usetabsStore()
+//使用路由跳转
+const route = useRoute()
+const router = useRouter()
+function routeMune(val){
+  router.push(val.path)
+  tabsStore.selectMenu(val)
+}
+//刷新也能选中
+const activeMenu = computed(()=>route.path)
 </script>
 
 <template>
@@ -63,6 +76,7 @@ const { isCollapse } = storeToRefs(CollapseStore);
     text-color="#fff"
     :collapse="isCollapse"    
     :collapse-transition="false"
+    :default-active="activeMenu"
   >
     <h3 v-show="!isCollapse">通用后台管理系统</h3>
     <h3 v-show="isCollapse">后台</h3>
@@ -70,6 +84,7 @@ const { isCollapse } = storeToRefs(CollapseStore);
       v-for="item in noChildren"
       :index="item.path"
       :key="item.path"
+      @click="routeMune(item)"
     >
       <component class="icons" :is="item.icon"></component>
       <span>{{ item.label }}</span>
@@ -88,6 +103,7 @@ const { isCollapse } = storeToRefs(CollapseStore);
           v-for="(subItem,subIndex) in item.children"
           :index="subItem.path"
           :key="subItem.path"
+          @click="routeMune(subItem)"
         >
           <component class="icons" :is="subItem.icon"></component>
           <span>{{ subItem.label }}</span>

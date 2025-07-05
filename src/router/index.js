@@ -2,6 +2,7 @@ import { createRouter,createWebHashHistory } from "vue-router";
 import Main from "@/view/main.vue"
 import Home from "@/view/home.vue"
 import User from "@/view/user.vue"
+import Mall from "@/view/mall.vue";
 const router = createRouter({
   history:createWebHashHistory(),
   routes:[
@@ -20,6 +21,11 @@ const router = createRouter({
           path:'user',
           name:'user',
           component:User
+        },
+        {
+          path:'mall',
+          name:'mall',
+          component:Mall
         },
       ]
     },

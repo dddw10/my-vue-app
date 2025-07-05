@@ -6,7 +6,6 @@ const {proxy} = getCurrentInstance()
 const tableData = ref([])
 async function getUserData(name: string = ""){
   let data = await proxy.$api.getUserData(sereach_name)
-  console.log(data)
   tableData.value = data.list.map(item =>({
     ...item,
     sexLabel : item.sex === 1 ? '男' : '女'
