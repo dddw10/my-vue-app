@@ -3,6 +3,7 @@ import Main from "@/view/main.vue"
 import Home from "@/view/home.vue"
 import User from "@/view/user.vue"
 import Mall from "@/view/mall.vue";
+import Login from "@/view/login.vue";
 const router = createRouter({
   history:createWebHashHistory(),
   routes:[
@@ -28,6 +29,11 @@ const router = createRouter({
           component:Mall
         },
       ]
+    },
+    {
+      path:'/login',
+      name:'login',
+      component:Login
     },
   ]
 })
