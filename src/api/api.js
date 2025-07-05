@@ -47,5 +47,13 @@ export default {
       mock: false,
       data
     })
-  }
+  },
+  editUser(data){
+    return request({
+      url:'/user/editUser',
+      method:'post',
+      mock: false,
+      data
+    })
+  },
 }

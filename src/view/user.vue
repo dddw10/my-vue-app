@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {ref,onMounted,getCurrentInstance,reactive} from 'vue'
+import {ref,onMounted,getCurrentInstance,reactive,nextTick, ComponentInternalInstance} from 'vue'
 import { ElMessageBox,ElMessage,FormInstance, FormRules } from "element-plus";
 import moment from 'moment'
 const {proxy} = getCurrentInstance()
 const tableData = ref([])
-async function getUserData(){
+async function getUserData(name: string = ""){
   let data = await proxy.$api.getUserData(sereach_name)
   console.log(data)
   tableData.value = data.list.map(item =>({
@@ -37,8 +37,15 @@ const tableLabel = reactive([
     width:400
   },
 ])
-const handleClick = () => {
-  console.log('click')
+//区别编辑还是新增功能
+const action = ref('add')
+//编辑功能
+const handleClick = (val) => {
+  action.value = 'edit'
+  dialogFormVisible.value = true
+  nextTick(()=>{
+    Object.assign(ruleForm,{...val,region:''+val.sex,address:val.addr,date:val.birth})
+  })
 }
 //搜索功能
 const sereach = reactive({
@@ -126,10 +133,9 @@ const rules = reactive<FormRules<RuleForm>>({
 function timeFormat(time){
   const date = new Date(time)
   const timeFormatdate = moment(date).format('YYYY-MM-DD')
-  console.log(timeFormatdate)
   return timeFormatdate
 }
-
+//增加提交功能
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate( async (valid, fields) => {
@@ -137,13 +143,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       let res = null
       ruleForm.date = timeFormat(ruleForm.date)
       console.log('submit!',ruleForm)
-      res = await proxy.$api.addUser(ruleForm)
+      if(action.value === 'add'){
+        res = await proxy.$api.addUser(ruleForm)
+      }else{
+        res = await proxy.$api.editUser(ruleForm)
+      }
       if(res){
         getUserData()
         dialogFormVisible.value = false
+        const message = action.value === 'add' ? '添加成功' : '编辑成功' 
         ElMessage({
           showClose:true,
-          message:'添加成功',
+          message:message,
           type:'success'
         })
       }
@@ -151,7 +162,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     } else {
       ElMessage({
         showClose:true,
-        message:'添加失败',
+        message:'请输入正确内容',
         type:'error'
       })
       console.log('error submit!', fields)
@@ -160,6 +171,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 //重置页面
 const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+//新增按钮
+const adduser = (formEl: FormInstance | undefined)=>{
+  action.value = 'add'
   dialogFormVisible.value = true
   if (!formEl) return
   formEl.resetFields()
@@ -175,7 +192,7 @@ onMounted(()=>{
 </script>
 <template>
   <div class="user-header">
-    <el-button type="primary" plain @click="resetForm(ruleFormRef)">+新增</el-button>
+    <el-button type="primary" plain @click="adduser(ruleFormRef)">+新增</el-button>
     <el-form :inline="true" :model="sereach">
       <el-form-item label="请输入">
         <el-input placeholder="请输入用户名" v-model="sereach.keyWord"></el-input>
@@ -196,7 +213,7 @@ onMounted(()=>{
       />
       <el-table-column fixed="right" label="Operations" min-width="120">
         <template #="scope">
-          <el-button  type="primary" size="small" @click="handleClick">编辑</el-button>
+          <el-button  type="primary" size="small" @click="handleClick(scope.row)">编辑</el-button>
           <el-button  type="danger" size="small" @click="handelDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -210,7 +227,7 @@ onMounted(()=>{
         @current-change="handleChange"
          />
   </div>
-  <el-dialog v-model="dialogFormVisible" title="增加用户" width="500">
+  <el-dialog v-model="dialogFormVisible" :title="action === 'add' ? '增加用户' : '编辑用户' " width="500">
     <el-form
     ref="ruleFormRef"
     style="max-width: 500px"

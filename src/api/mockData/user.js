@@ -27,7 +27,7 @@ for(let i = 0; i < count; i++){
 }
 
 export default{
-  getUserList:config =>{
+  getUserList:(config) =>{
     const{name,page = 1,limit =10} = param20bj(config.url)
     const mockList = List.filter(user =>{
       if(name && user.name.indexOf(name) === -1) return false
@@ -77,5 +77,34 @@ export default{
         message:'添加成功'
       }
     }
+  },
+  editUser: (config) => {
+  const { id, name, age, date, address, region } = JSON.parse(config.body);
+  const found = List.some((u) => {
+    if (u.id === id) {
+      u.name = name;
+      u.age = age;
+      u.birth = date;
+      u.sex = !isNaN(parseInt(region, 10)) ? parseInt(region, 10) : u.sex; // 防止NaN
+      u.addr = address;
+      return true; // 找到匹配项后停止遍历
+    }
+  });
+
+  if (found) {
+    return {
+      code: 200,
+      data: {
+        message: '编辑成功'
+      }
+    };
+  } else {
+    return {
+      code: 404,
+      data: {
+        message: '用户未找到'
+      }
+    };
   }
+}
 }
