@@ -9,15 +9,25 @@ import '@/api/mockjs.js'
 import { createPinia } from "pinia";
 import api from "@/api/api";
 import { useloginStore } from "./store/loginStore";
+
 const pinia = createPinia()
-
 const app = createApp(App);
-
 //挂载api在全局使用
 app.config.globalProperties.$api = api
 //pinia
 app.use(pinia);
 const login = useloginStore()
+function isRouter(to){
+  return router.getRoutes().filter(item=>item.path === to.path).length>0
+}
+router.beforeEach((to,form)=>{
+  if(to.path !== '/login' && !login.token){
+    return {name:"login"}
+  }
+  if(!isRouter(to)){
+    return{name:"404"}
+  }
+})
 login.addMenu(router,"refresh")
 // 注册路由和 Element Plus
 app.use(router);

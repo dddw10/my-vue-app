@@ -19,6 +19,11 @@ const router = createRouter({
       name:'login',
       component:Login
     },
+    {
+      path:'/404',
+      name:'404',
+      component:()=>import("@/view/404.vue")
+    }
   ]
 })
 export default router
