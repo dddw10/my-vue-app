@@ -10,6 +10,15 @@ const{ isCollapse } = storeToRefs(CollapseStore)
 function change_isCollapse(){
   isCollapse.value = !isCollapse.value
 }
+//退出登录
+import { useloginStore } from "../store/loginStore";
+import { useRouter } from "vue-router";
+const router = useRouter()
+const login = useloginStore()
+function logOut(){
+  login.loginOut()
+  router.push('/login')
+}
 </script>
 <template>
   <div class="content">
@@ -29,7 +38,7 @@ function change_isCollapse(){
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>个人中心</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item @click="logOut()">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>

@@ -7,6 +7,11 @@ export const useloginStore = defineStore('useloginStore',()=>{
     const token = ref()
     const routerlist = ref([])
     //方法
+    function initState(){
+        menuList.value = []; // 初始化 menuList 的值
+        token.value = null; // 初始化 token 的值
+        routerlist.value = []; // 初始化 routerlist 的值
+    }
     watch([token,menuList,router],([newtoken,newmenuList,newrouter])=>{
         if(!newtoken)return
         localStorage.setItem("menuList",JSON.stringify(newmenuList))
@@ -57,5 +62,15 @@ export const useloginStore = defineStore('useloginStore',()=>{
             routerlist.value.push(router.addRoute("main",item))
         })
     }
-    return{menuList,token,getMenuList,addMenu}
+    //退出登录
+    function loginOut(){
+        routerlist.value.forEach((item)=>{
+            if(item){
+                item()
+            }
+            initState()
+            localStorage.removeItem("menuList")
+        })
+    }
+    return{menuList,token,getMenuList,addMenu,loginOut}
 })
