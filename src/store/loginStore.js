@@ -1,15 +1,33 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref,watch } from "vue";
+import router from "../router";
 export const useloginStore = defineStore('useloginStore',()=>{
     //数据
     const menuList = ref([])
     const token = ref()
     const routerlist = ref([])
     //方法
+    watch([token,menuList,router],([newtoken,newmenuList,newrouter])=>{
+        if(!newtoken)return
+        localStorage.setItem("menuList",JSON.stringify(newmenuList))
+    },
+    {
+        deep:true
+    })
     function getMenuList(val){
         menuList.value = val
     }
-    function addMenu(router){
+    function addMenu(router,type){
+        if(type === 'refresh'){
+            const menuValue = localStorage.getItem("menuList")
+            if(menuValue){
+                 menuList.value = JSON.parse(menuValue)
+                //不能解析
+                routerlist.value = []
+            }else{
+                return
+            }
+        }
         const menu = menuList.value
         console.log('11,',menuList.value)
         const module = import.meta.glob('../view/**/*.vue')
