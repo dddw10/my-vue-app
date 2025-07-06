@@ -22,6 +22,7 @@ function isRouter(to){
 }
 router.beforeEach((to,form)=>{
   if(to.path !== '/login' && !login.token){
+    console.log('333',login.token)
     return {name:"login"}
   }
   if(!isRouter(to)){

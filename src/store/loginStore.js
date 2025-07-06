@@ -12,21 +12,31 @@ export const useloginStore = defineStore('useloginStore',()=>{
         token.value = null; // 初始化 token 的值
         routerlist.value = []; // 初始化 routerlist 的值
     }
-    watch([token,menuList,router],([newtoken,newmenuList,newrouter])=>{
-        if(!newtoken)return
-        localStorage.setItem("menuList",JSON.stringify(newmenuList))
-    },
-    {
-        deep:true
-    })
+    watch([token, menuList, routerlist], ([newToken, newMenuList, newRouterList]) => {
+        if (!newToken) return;
+
+        // 提取响应式对象的值
+        const state = {
+            token: newToken,
+            menuList: newMenuList,
+            routerlist: newRouterList
+        };
+
+        // 序列化为 JSON 字符串
+        localStorage.setItem("appState", JSON.stringify(state));
+        }, {
+        deep: true
+    });
     function getMenuList(val){
         menuList.value = val
     }
     function addMenu(router,type){
         if(type === 'refresh'){
-            const menuValue = localStorage.getItem("menuList")
-            if(menuValue){
-                 menuList.value = JSON.parse(menuValue)
+            const Value = localStorage.getItem("appState")
+            if(Value){
+                const state =JSON.parse(Value)
+                menuList.value = state.menuList || [];
+                token.value = state.token
                 //不能解析
                 routerlist.value = []
             }else{
@@ -34,7 +44,6 @@ export const useloginStore = defineStore('useloginStore',()=>{
             }
         }
         const menu = menuList.value
-        console.log('11,',menuList.value)
         const module = import.meta.glob('../view/**/*.vue')
         const routeArr = []
         menu.forEach((item)=>{
