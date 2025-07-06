@@ -12,23 +12,7 @@ const router = createRouter({
       name:'main',
       component:Main,
       redirect:'/home',
-      children:[
-        {
-          path:'home',
-          name:'home',
-          component:Home
-        },
-        {
-          path:'user',
-          name:'user',
-          component:User
-        },
-        {
-          path:'mall',
-          name:'mall',
-          component:Mall
-        },
-      ]
+      children:[]
     },
     {
       path:'/login',

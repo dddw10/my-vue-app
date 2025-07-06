@@ -1,22 +1,35 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive,getCurrentInstance } from "vue";
+import { useloginStore } from "../store/loginStore";
+import { useRouter } from "vue-router";
+const router = useRouter()
+const loginStore = useloginStore()
 const loginFrom = reactive({
     account:'',
     password:''
 })
+const {proxy} = getCurrentInstance()
+async function into(val){
+    const res = await proxy.$api.getMenu(val)
+    //通过pinia，实现跨组件传值
+    loginStore.getMenuList(res.menu)
+    loginStore.token = res.token
+    loginStore.addMenu(router)
+    router.push('/home')
+}
 </script>
 <template>
     <div class="login">
         <el-form :model="loginFrom" class="form">
             <h1>欢迎登录</h1>
             <el-form-item>
-                <el-input v-model="loginFrom.account" placeholder="请输入账号"></el-input>
+                <el-input v-model="loginFrom.account" placeholder="请输入账号" clearable></el-input>
             </el-form-item>
             <el-form-item>
-                <el-input v-model="loginFrom.account" placeholder="请输入密码"></el-input>
+                <el-input  type="password" show-password clearable v-model="loginFrom.password" placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary">登录</el-button>
+                <el-button type="primary" @click="into(loginFrom)">登录</el-button>
             </el-form-item>
         </el-form>
     </div>

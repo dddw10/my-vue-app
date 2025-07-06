@@ -1,49 +1,14 @@
 <script setup>
 import { ref,computed } from "vue";
-const list = ref([
-  {
-    path:'/home',
-    name:'home',
-    label:'首页',
-    icon:'house',
-    url:'Home'
-  },
-  {
-    path:'/mall',
-    name:'mall',
-    label:'商品管理',
-    icon:'video-play',
-    url:'Mall'
-  },
-  {
-    path:'/user',
-    name:'user',
-    label:'用户管理',
-    icon:'user',
-    url:'User'
-  },
-  {
-    path:'/other',
-    label:'其他',
-    icon:'user',
-    children:[
-      {
-        path:'/page1',
-        name:'page1',
-        label:'页面1',
-        icon:'setting',
-        url:'Page1'
-      },
-      {
-        path:'/page2',
-        name:'page2',
-        label:'页面2',
-        icon:'setting',
-        url:'Page2'
-      }
-    ]
-  },
-])
+//登录的条件选择
+import { useloginStore } from "../store/loginStore.js";
+const loginStore = useloginStore()
+const list = computed(()=>loginStore.menuList)
+const token = computed(()=>loginStore.token)
+//loginStore.token 能实现,computed要.value
+// console.log(token.value)
+// console.log(list)
+
 //遍历
 const noChildren = computed(()=>list.value.filter(item=>!item.children))
 const hasChildren = computed(()=>list.value.filter(item=>item.children))
@@ -65,6 +30,7 @@ function routeMune(val){
 }
 //刷新也能选中
 const activeMenu = computed(()=>route.path)
+
 </script>
 
 <template>
