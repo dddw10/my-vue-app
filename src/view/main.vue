@@ -20,6 +20,9 @@ import { RouterLink, RouterView } from "vue-router";
         </el-main>
       </el-container>
     </el-container>
+    <ChildComponent 
+      :message="parentMessage" 
+    />
   </div>
 </template>
 <style scoped>

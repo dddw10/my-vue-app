@@ -32,6 +32,12 @@ async function into(val){
                 <el-button type="primary" @click="into(loginFrom)">登录</el-button>
             </el-form-item>
         </el-form>
+        <div class="connect">
+            <h2>管理员账号:admin</h2>
+            <h2>管理员密码:admin</h2>
+            <h2>用户账号:dw1010</h2>
+            <h2>用户密码:dw1010</h2>
+        </div>
     </div>
 </template>
 <style scoped>
@@ -67,5 +73,24 @@ async function into(val){
 }
 :deep(.el-form-item__content){
     justify-content: center;
+}
+.connect{
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    height: 100px;
+    position: absolute;
+    padding: 10px;
+    text-align: center;
+    right: 10px;
+    margin-bottom: 10%;
+    background-color: rgb(225, 155, 133);
+    border: 1px solid #9f8987;
+    border-radius: 20px;
+    box-shadow: 0 0 25px #9f8987;
+    
+}
+h2{
+    margin-bottom: 5px;
 }
 </style>

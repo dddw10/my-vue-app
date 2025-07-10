@@ -5,6 +5,7 @@ export const usetabsStore = defineStore('usetabsStore',()=>{
     //数据
     const router = useRouter()
     const route = useRoute()
+    const currentMenu = ref()
     const tabs = ref([
         {
             path:'/home',
@@ -18,8 +19,9 @@ export const usetabsStore = defineStore('usetabsStore',()=>{
     //方法
     function selectMenu(val){
         if(val.name === 'home'){
-            ""
+            currentMenu.value = null
         }else{
+            currentMenu.value = val
             let index = tabs.value.findIndex(item=>item.name === val.name)
             index === -1 ? tabs.value.push(val) : ""
         }
@@ -37,5 +39,5 @@ export const usetabsStore = defineStore('usetabsStore',()=>{
             router.push(tabs.value[index].path)
         }
     }
-    return {tabs,selectMenu,closeTag}
+    return {tabs,currentMenu,selectMenu,closeTag}
 })

@@ -2,6 +2,7 @@
 import { ref,getCurrentInstance,onMounted,reactive } from "vue";
 import * as echarts from 'echarts'
 const {proxy} = getCurrentInstance()
+const message = ref('dad')
 //请求数据，使用mockjs拦截器
 //获取照片的url地址
 function getImageUrl(user){

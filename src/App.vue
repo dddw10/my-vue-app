@@ -1,4 +1,9 @@
 <script setup>
+
+import { ref } from 'vue';
+
+const parentMessage = ref('daaasd')
+
 </script>
 
 <template>

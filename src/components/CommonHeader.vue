@@ -19,6 +19,11 @@ function logOut(){
   login.loginOut()
   router.push('/login')
 }
+//面包屑功能的实现
+import { usetabsStore } from "../store/tabsStore";
+import { computed } from "vue";
+const tabsStore = usetabsStore()
+const current = computed(()=>tabsStore.currentMenu)
 </script>
 <template>
   <div class="content">
@@ -27,7 +32,8 @@ function logOut(){
         <component class="icons" is="Menu"></component>
       </el-button>
       <el-breadcrumb separator="/" class="bread">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="current" :to="current.path">{{ current.label }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="right-content">
